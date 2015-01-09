@@ -9,7 +9,8 @@ require 'webhooker/configuration'
 
 module Webhooker
   class App < Sinatra::Base
-    Configuration.load!('config/example.yml')
+    configuration_file = 'config/example.yml'
+    Configuration.load!(configuration_file)
     include Logging
 
     # Sinatra configuration
@@ -51,6 +52,8 @@ module Webhooker
       if Configuration.settings.has_key?(parsed_data[:type].to_sym)
         case parsed_data[:type]
           when 'vcs'
+            # reload configuration
+            Configuration.load!(configuration_file)
             command = nil
             # is the repo name configured?
             if Configuration.settings[:vcs].has_key?(parsed_data[:repo_name].to_sym)
@@ -59,7 +62,12 @@ module Webhooker
               if repo_config.has_key?(parsed_data[:branch_name].to_sym)
                 logger.debug "branch is explicitely configured"
                 branch_config = repo_config[parsed_data[:branch_name].to_sym]
-                command = branch_config[:command]
+                begin
+                  command = branch_config[:command]
+                rescue
+                  logger.error "no command configured"
+                  halt 500
+                end
               # is there a catch all rule?
               elsif repo_config.has_key?(:_all)
                 logger.debug "branch is not not explicitely configured, but there is a '_all' rule"
@@ -76,9 +84,6 @@ module Webhooker
                 parsed_command = ERB.new(command).result(binding)
                 command_runner = Commandrunner.new(parsed_command)
                 command_runner.run
-              else
-                logger.error "no command configured"
-                halt 500
               end
             # is there a catch all rule?
             elsif Configuration.settings[:vcs].has_key?(:_all)
@@ -94,7 +99,6 @@ module Webhooker
       else
         logger.info "webhook payload of type #{parsed_data[:type]} not configured"
       end
-
 
       # output to the requester
       "it's coming from #{parsed_data[:source]}"

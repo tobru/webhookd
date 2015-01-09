@@ -13,7 +13,7 @@ vcs:
       command: 'echo _all'
     production:
       #command: 'r10k deploy environment <%= branch_name %> -pv'
-      command: 'echo production <%= branch_name %>'
+      command: 'echo this is <%= branch_name %>'
     development:
       command: 'echo development'
   encdata:

@@ -34,7 +34,8 @@ module Webhooker
         halt 400
       end
       parser = ParsePayload.new(request.body.read)
-      parser.parse
+      parsed_data = parser.parse
+      "it's coming from #{parsed_data[:source]}"
     end
   end
 end

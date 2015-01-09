@@ -1,5 +1,6 @@
 ---
 global:
+  loglevel: 'debug'
   logfile: 'app.log'
   logfile_errors: 'error.log'
   username: 'deployer'

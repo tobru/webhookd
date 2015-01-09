@@ -29,7 +29,7 @@ module Webhooker
 
     post '/payload/:payloadtype' do
       begin
-        require "webhooker/payloadtype/#{params[:payloadtype]}"
+        load "webhooker/payloadtype/#{params[:payloadtype]}.rb"
       rescue LoadError
         halt 400
       end

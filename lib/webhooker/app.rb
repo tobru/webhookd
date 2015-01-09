@@ -1,7 +1,6 @@
 require 'sinatra/base'
-require 'yaml'
-require 'json'
 require 'erb'
+require 'thin'
 require 'webhooker/version'
 require 'webhooker/command_runner'
 require 'webhooker/logging'
@@ -9,12 +8,13 @@ require 'webhooker/configuration'
 
 module Webhooker
   class App < Sinatra::Base
-    configuration_file = 'config/example.yml'
+    configuration_file = ENV["CONFIG_FILE"] || 'config/example.yml'
     Configuration.load!(configuration_file)
     include Logging
 
     # Sinatra configuration
-    configure { set :show_exceptions, false }
+    set :show_exceptions, false
+    set server: 'thin', connections: [], history_file: 'history.yml'
 
     not_found do
       'Route not found. Do you know what you want to do?'
@@ -101,6 +101,7 @@ module Webhooker
       end
 
       # output to the requester
+      logger.debug "using configuration file #{configuration_file}"
       "it's coming from #{parsed_data[:source]}"
     end
   end

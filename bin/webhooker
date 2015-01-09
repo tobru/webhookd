@@ -1,12 +1,8 @@
 #!/usr/bin/env ruby
 
-begin
-  require 'webhooker'
-rescue LoadError => e
-  require 'rubygems'
-  path = File.expand_path '../../lib', __FILE__
-  $:.unshift(path) if File.directory?(path) && !$:.include?(path)
-  require 'webhooker'
-end
+require 'pathname'
+bin_file = Pathname.new(__FILE__).realpath
+$:.unshift File.expand_path("../../lib", bin_file)
 
-Webhooker::App.run!
+require 'webhooker/cli'
+Webhooker::CLI.start(ARGV)

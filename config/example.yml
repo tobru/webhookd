@@ -7,14 +7,19 @@ global:
   password: 'Deploy1T'
   bind: '127.0.0.1'
   port: '8088'
-repos:
+vcs:
   puppet-control:
+    _all:
+      command: 'echo _all'
     production:
-      command: 'r10k deploy environment <%= branch_name %> -pv'
-      #command: 'echo yes'
+      #command: 'r10k deploy environment <%= branch_name %> -pv'
+      command: 'echo production <%= branch_name %>'
     development:
-      command: 'make it different'
+      command: 'echo development'
   encdata:
     master:
       command: 'git pull'
+  puppet-*:
+    _all:
+      command: 'echo all puppet-*'
 

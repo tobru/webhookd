@@ -9,7 +9,13 @@ module Configuration
   attr_reader :settings
 
   def load!(filename, options = {})
-    @settings = symbolize_keys(YAML::load_file(filename))
+    begin
+      @settings = symbolize_keys(YAML::load_file(filename))
+    rescue Errno::ENOENT
+      puts "[FATAL] configuration file '#{filename}' not found. Exiting."; exit 1
+    rescue Psych::SyntaxError
+      puts "[FATAL] configuration file '#{filename}' contains invalid syntax. Exiting."; exit 1
+    end
   end
 
   def symbolize_keys(hash)

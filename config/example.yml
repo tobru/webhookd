@@ -1,0 +1,19 @@
+---
+global:
+  logfile: 'app.log'
+  logfile_errors: 'error.log'
+  username: 'deployer'
+  password: 'Deploy1T'
+  bind: '127.0.0.1'
+  port: '8088'
+repos:
+  puppet-control:
+    production:
+      command: 'r10k deploy environment <%= branch_name %> -pv'
+      #command: 'echo yes'
+    development:
+      command: 'make it different'
+  encdata:
+    master:
+      command: 'git pull'
+

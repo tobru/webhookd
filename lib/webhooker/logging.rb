@@ -1,4 +1,5 @@
 require 'logger'
+require 'webhooker/configuration'
 
 module Logging
   # This is the magical bit that gets mixed into your classes
@@ -15,8 +16,10 @@ module Logging
     end
 
     def configure_logger_for(classname)
+      logfile = Configuration.settings[:global][:logfile]
       logger = Logger.new(STDOUT)
       logger.progname = classname
+      logger.debug "configured logger with logfile #{logfile}"
       logger
     end
   end

@@ -1,13 +1,14 @@
-require 'sinatra'
+require 'sinatra/base'
 require 'yaml'
 require 'json'
 require 'webhooker/version'
 require 'webhooker/command_runner'
 require 'webhooker/logging'
+require 'webhooker/configuration'
 
 module Webhooker
   class App < Sinatra::Base
-
+    Configuration.load!('/home/tobru/src/wuala/webhooker/config/example.yml')
     include Logging
 
     # Sinatra configuration

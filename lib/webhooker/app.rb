@@ -37,12 +37,8 @@ module Webhooker
       'Route not found. Do you know what you want to do?'
     end
 
-    error 400 do
-      'Payload type unknown'
-    end
-
     error do |err|
-      "There was an application error: #{err}"
+      "I'm so sorry, there was an application error: #{err}"
     end
 
     ### Sinatra routes
@@ -62,7 +58,7 @@ module Webhooker
         load "webhooker/payloadtype/#{params[:payloadtype]}.rb"
       rescue LoadError
         logger.error "file not found: webhooker/payloadtype/#{params[:payloadtype]}.rb"
-        halt 400
+        halt 400, "Payload type unknown\n"
       end
 
       parser = ParsePayload.new(request.body.read)
@@ -86,7 +82,7 @@ module Webhooker
                   command = branch_config[:command]
                 rescue
                   logger.error "no command configured"
-                  halt 500
+                  halt 500, "no command configured\n"
                 end
               # is there a catch all rule?
               elsif repo_config.has_key?(:_all)
@@ -95,8 +91,9 @@ module Webhooker
                 command = branch_config[:command]
               # don't know what to do
               else
-                logger.error "no configuration for branch '#{parsed_data[:branch_name]}' found"
-                halt 500
+                error_msg = "no configuration for branch '#{parsed_data[:branch_name]}' found"
+                logger.error error_msg
+                halt 500, "#{error_msg}\n"
               end
               if command
                 # vars for ERB binding
@@ -109,15 +106,19 @@ module Webhooker
             elsif Configuration.settings[:vcs].has_key?(:_all)
               logger.info "repository not explicitely configured, but there is a '_all' rule"
             else
-              logger.error "the repository '#{parsed_data[:repo_name]}' is not configured"
-              halt 500
+              error_msg = "the repository '#{parsed_data[:repo_name]}' is not configured"
+              logger.error error_msg
+              halt 500, "#{error_msg}\n"
             end
           else
-            logger.fatal "webhook payload type #{parsed_data[:type]} unknown"
-            halt 500
+            error_msg = "webhook payload type #{parsed_data[:type]} unknown"
+            logger.fatal error_msg
+            halt 500, "#{error_msg}\n"
         end
       else
-        logger.info "webhook payload of type #{parsed_data[:type]} not configured"
+        error_msg = "webhook payload of type #{parsed_data[:type]} not configured"
+        logger.info error_msg
+        halt 500, "#{error_msg}\n"
       end
 
       # output to the requester

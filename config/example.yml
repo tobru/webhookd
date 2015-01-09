@@ -5,8 +5,6 @@ global:
   logfile_errors: 'error.log'
   username: 'deployer'
   password: 'Deploy1T'
-  bind: '127.0.0.1'
-  port: '8088'
 vcs:
   puppet-control:
     _all:

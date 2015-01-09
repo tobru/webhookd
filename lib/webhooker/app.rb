@@ -16,6 +16,23 @@ module Webhooker
     set :show_exceptions, false
     set server: 'thin', connections: [], history_file: 'history.yml'
 
+    # helpers
+    helpers do
+      def protected!
+        return if authorized?
+        headers['WWW-Authenticate'] = 'Basic realm="Webhooker authentication"'
+        halt 401, "Not authorized\n"
+      end
+
+      def authorized?
+        @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+        user = Configuration.settings[:global][:username]
+        password = Configuration.settings[:global][:password]
+        @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == [user,password]
+      end
+    end
+
+    # error handling
     not_found do
       'Route not found. Do you know what you want to do?'
     end
@@ -25,16 +42,19 @@ module Webhooker
     end
 
     error do |err|
-        "There was an application error: #{err}"
+      "There was an application error: #{err}"
     end
 
     ### Sinatra routes
     # we don't have anything to show
     get '/' do
-        "I'm running. Nice, isn't it?"
+      protected!
+      logger.info "incoming request from #{request.ip} for GET /"
+      "I'm running. Nice, isn't it?"
     end
 
     post '/payload/:payloadtype' do
+      protected!
       logger.info "incoming request from #{request.ip} for payload type #{params[:payloadtype]}"
 
       begin

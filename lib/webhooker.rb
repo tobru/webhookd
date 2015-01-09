@@ -1,5 +1,3 @@
-require "webhooker/version"
-
 module Webhooker
-  # Your code goes here...
+  autoload :App, 'webhooker/app'
 end

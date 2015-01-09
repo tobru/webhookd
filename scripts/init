@@ -1,0 +1,57 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:        webhooker_start
+# Required-Start:  $network $syslog
+# Required-Stop:
+# Default-Start:   2 3 4 5
+# Default-Stop:
+# Short-Description: Starts up the webhooker server
+### END INIT INFO
+
+set -e
+
+# Feel free to change any of the following variables for your app:
+TIMEOUT=${TIMEOUT-60}
+APP_ROOT=/srv/webhooker
+PID=/run/thin.8088.pid
+CMD="cd $APP_ROOT; webhooker start -s1 -d -p 8088 -P /run/webhooker.pid "
+AS_USER=root
+set -u
+
+OLD_PIN="$PID.oldbin"
+
+sig () {
+  test -s "$PID" && kill -$1 `cat $PID`
+}
+
+oldsig () {
+  test -s $OLD_PIN && kill -$1 `cat $OLD_PIN`
+}
+
+run () {
+  if [ "$(id -un)" = "$AS_USER" ]; then
+    eval $1
+  else
+    su -c "$1" - $AS_USER
+  fi
+}
+
+case "$1" in
+    start)
+      sig 0 && echo >&2 "Already running" && exit 0
+      run "$CMD"
+      ;;
+    stop)
+      sig QUIT && exit 0
+      echo >&2 "Not running"
+      ;;
+    restart)
+      sig HUP && echo reloaded OK && exit 0
+      echo >&2 "Couldn't reload, starting '$CMD' instead"
+      run "$CMD"
+      ;;
+    *) echo "usage: $0 start|stop|restart" >&2
+       exit 1
+       ;;
+esac

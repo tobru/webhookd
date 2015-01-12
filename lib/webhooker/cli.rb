@@ -9,7 +9,7 @@ module Webhooker
     desc "start", "Starts the webhooker server"
     method_option :config_file, :desc => "Path to the configuration file"
     def start(*args)
-      port_option = args.include?('-p') ? '' : ' -p 3030'
+      port_option = args.include?('-p') ? '' : ' -p 8088'
       args = args.join(' ')
       command = "bundle exec thin -R config.ru start#{port_option} #{args}"
       command.prepend "export CONFIG_FILE=#{options[:config_file]}; " if options[:config_file]

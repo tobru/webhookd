@@ -9,15 +9,9 @@ module Webhooker
     desc "start", "Starts the webhooker server"
     method_option :config_file, :desc => "Path to the configuration file"
     def start(*args)
-      begin
-        spec = Gem::Specification.find_by_name('webhooker')
-        gem_dir = spec.gem_dir
-      rescue Gem::LoadError
-        gem_dir = '.'
-      end
       port_option = args.include?('-p') ? '' : ' -p 8088'
       args = args.join(' ')
-      command = "thin -R #{gem_dir}/config.ru start#{port_option} #{args}"
+      command = "thin -R #{get_rackup_config} start#{port_option} #{args}"
       command.prepend "export CONFIG_FILE=#{options[:config_file]}; " if options[:config_file]
       begin
         run_command(command)
@@ -29,7 +23,7 @@ module Webhooker
 
     desc "stop", "Stops the thin server"
     def stop
-      command = "thin -R #{spec.gem_dir}/config.ru stop"
+      command = "thin -R #{get_rackup_config} stop"
       run_command(command)
     end
 
@@ -37,6 +31,15 @@ module Webhooker
     map 's' => :start
 
     private
+
+    def get_rackup_config
+      begin
+        spec = Gem::Specification.find_by_name('webhooker')
+        "#{spec.gem_dir}/config.ru"
+      rescue Gem::LoadError
+        "./config.ru"
+      end
+    end
 
     def run_command(command)
       system(command)

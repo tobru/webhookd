@@ -13,7 +13,12 @@ module Webhooker
       args = args.join(' ')
       command = "bundle exec thin -R config.ru start#{port_option} #{args}"
       command.prepend "export CONFIG_FILE=#{options[:config_file]}; " if options[:config_file]
-      run_command(command)
+      begin
+        run_command(command)
+      rescue SystemExit, Interrupt
+        puts "Program interrupted"
+        exit
+      end
     end
 
     desc "stop", "Stops the thin server"

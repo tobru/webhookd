@@ -8,7 +8,7 @@ require 'webhooker/configuration'
 
 module Webhooker
   class App < Sinatra::Base
-    configuration_file = ENV["CONFIG_FILE"] || 'config/example.yml'
+    configuration_file = ENV["CONFIG_FILE"] || 'etc/example.yml'
     Configuration.load!(configuration_file)
     include Logging
 

@@ -34,11 +34,11 @@ module Webhooker
 
     # error handling
     not_found do
-      'Route not found. Do you know what you want to do?'
+      "Route not found. Do you know what you want to do?\n"
     end
 
     error do |err|
-      "I'm so sorry, there was an application error: #{err}"
+      "I'm so sorry, there was an application error: #{err}\n"
     end
 
     ### Sinatra routes
@@ -46,7 +46,7 @@ module Webhooker
     get '/' do
       protected!
       logger.info "incoming request from #{request.ip} for GET /"
-      "I'm running. Nice, isn't it?"
+      "I'm running. Nice, isn't it?\n"
     end
 
     post '/payload/:payloadtype' do

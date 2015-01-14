@@ -2,16 +2,14 @@
 global:
   loglevel: 'debug'
   logfile: 'app.log'
-  logfile_errors: 'error.log'
   username: 'deployer'
   password: 'Deploy1T'
 vcs:
   puppet-control:
     _all:
-      command: 'echo _all'
-    production:
-      #command: 'r10k deploy environment <%= branch_name %> -pv'
       command: 'echo this is <%= branch_name %>'
+    production:
+      command: 'echo this is production'
     nocommandbranch:
   encdata:
     master:

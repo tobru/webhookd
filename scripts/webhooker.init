@@ -11,30 +11,30 @@
 
 set -e
 
-# Feel free to change any of the following variables for your app:
-TIMEOUT=${TIMEOUT-60}
-APP_ROOT=/srv/webhooker
-PID=/run/thin.8088.pid
-CMD="cd $APP_ROOT; webhooker start -s1 -d -p 8088 -P /run/webhooker.pid "
+# Default settings
 AS_USER=root
-set -u
+AS_GROUP=root
+PORT=8088
+CONFIGFILE=/etc/webhooker.yaml
 
-OLD_PIN="$PID.oldbin"
+# You should only need to edit the default/webhooker file and not
+#   this init script directly
+if [ -r "/etc/default/webhooker" ] ; then
+  . /etc/default/webhooker
+fi
+
+TIMEOUT=${TIMEOUT-60}
+PID=/run/webhooker.${PORT}.pid
+CMD="webhooker start -s1 -d -p ${PORT} -P /run/webhooker.pid --config-file=${CONFIGFILE} -d -u ${AS_USER} -g ${AS_GROUP} --tag webhooker"
+
+set -u
 
 sig () {
   test -s "$PID" && kill -$1 `cat $PID`
 }
 
-oldsig () {
-  test -s $OLD_PIN && kill -$1 `cat $OLD_PIN`
-}
-
 run () {
-  if [ "$(id -un)" = "$AS_USER" ]; then
-    eval $1
-  else
-    su -c "$1" - $AS_USER
-  fi
+  eval $1
 }
 
 case "$1" in
@@ -42,8 +42,12 @@ case "$1" in
       sig 0 && echo >&2 "Already running" && exit 0
       run "$CMD"
       ;;
+    status)
+      [ ! -e "$PID" ] && echo "Not running" && exit 0
+      sig 0 && echo >&2 "Running" && exit 0
+      ;;
     stop)
-      sig QUIT && exit 0
+      sig QUIT && rm "$PID" && exit 0
       echo >&2 "Not running"
       ;;
     restart)

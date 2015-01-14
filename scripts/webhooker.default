@@ -1,0 +1,6 @@
+# /etc/default/webhooker
+# Configuration for Webhooker daemon init script
+AS_USER=www-data
+AS_GROUP=www-data
+CONFIGFILE=/etc/webhooker.yaml
+PORT=8088

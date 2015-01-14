@@ -123,7 +123,7 @@ module Webhooker
 
       # output to the requester
       logger.debug "using configuration file #{configuration_file}"
-      "it's coming from #{parsed_data[:source]}"
+      "webhook received\n"
     end
   end
 end

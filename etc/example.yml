@@ -12,12 +12,8 @@ vcs:
     production:
       #command: 'r10k deploy environment <%= branch_name %> -pv'
       command: 'echo this is <%= branch_name %>'
-    development:
-      command: 'echo development'
+    nocommandbranch:
   encdata:
     master:
       command: 'git pull'
-  puppet-*:
-    _all:
-      command: 'echo all puppet-*'
 

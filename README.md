@@ -1,95 +1,138 @@
 # Webhooker
 
-TODO: Write a gem description
+**Flexible, configurable universal webhook receiver**
+
+This app is a flexible, configurable universal webhook receiver, built with
+sinatra.
+It can receive a webhook, parse its payload and take action according to the
+configuration.
+
+Example: A git push to Gitlab sends a webhook to the webhooker. The webhooker then
+parses the payload which contains the name and the branch of the pushed commit.
+After that it looks up in the configuration what to do: run a different script per
+repo or even per branch.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'webhooker'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+Just install the GEM:
 
     $ gem install webhooker
 
 ## Usage
 
-### Starting
+### Starting and stopping
 
-`./bin/webhooker start`
+The webhooker uses thin as rack server by default. It has a small CLI utility
+to start and stop the service, called `webhooker`:
 
 ```
-Usage: thin [options] start|stop|restart|config|install
-
-Server options:
-    -a, --address HOST               bind to HOST address (default: 0.0.0.0)
-    -p, --port PORT                  use PORT (default: 3000)
-    -S, --socket FILE                bind to unix domain socket
-    -y, --swiftiply [KEY]            Run using swiftiply
-    -A, --adapter NAME               Rack adapter to use (default: autodetect)
-                                     (rack, rails, ramaze, merb, file)
-    -R, --rackup FILE                Load a Rack config file instead of Rack adapter
-    -c, --chdir DIR                  Change to dir before starting
-        --stats PATH                 Mount the Stats adapter under PATH
-
-SSL options:
-        --ssl                        Enables SSL
-        --ssl-key-file PATH          Path to private key
-        --ssl-cert-file PATH         Path to certificate
-        --ssl-disable-verify         Disables (optional) client cert requests
-
-Adapter options:
-    -e, --environment ENV            Framework environment (default: development)
-        --prefix PATH                Mount the app under PATH (start with /)
-
-Daemon options:
-    -d, --daemonize                  Run daemonized in the background
-    -l, --log FILE                   File to redirect output (default: /home/tobru/src/wuala/webhooker/log/thin.log)
-    -P, --pid FILE                   File to store PID (default: tmp/pids/thin.pid)
-    -u, --user NAME                  User to run daemon as (use with -g)
-    -g, --group NAME                 Group to run daemon as (use with -u)
-        --tag NAME                   Additional text to display in process listing
-
-Cluster options:
-    -s, --servers NUM                Number of servers to start
-    -o, --only NUM                   Send command to only one server of the cluster
-    -C, --config FILE                Load options from config file
-        --all [DIR]                  Send command to each config files in DIR
-    -O, --onebyone                   Restart the cluster one by one (only works with restart command)
-    -w, --wait NUM                   Maximum wait time for server to be started in seconds (use with -O)
-
-Tuning options:
-    -b, --backend CLASS              Backend to use, full classname
-    -t, --timeout SEC                Request or command timeout in sec (default: 30)
-    -f, --force                      Force the execution of the command
-        --max-conns NUM              Maximum number of open file descriptors (default: 1024)
-                                     Might require sudo to set higher than 1024
-        --max-persistent-conns NUM   Maximum number of persistent connections
-                                     (default: 100)
-        --threaded                   Call the Rack application in threads [experimental]
-        --threadpool-size NUM        Sets the size of the EventMachine threadpool.
-                                     (default: 20)
-        --no-epoll                   Disable the use of epoll
-
-Common options:
-    -r, --require FILE               require the library
-    -q, --quiet                      Silence all logging
-    -D, --debug                      Enable debug logging
-    -V, --trace                      Set tracing on (log raw request/response)
-    -h, --help                       Show this message
-    -v, --version                    Show version
+Commands:
+  webhooker help [COMMAND]  # Describe available commands or one specific command
+  webhooker start           # Starts the webhooker server
+  webhooker stop            # Stops the thin server
 ```
+
+To see the options for `thin`, run `webhooker start -h`. They can simply be added to the `start` command.
+F.e. `webhooker start -d --config-file=/path/to/config.yml`
+
+**Starting the webhooker server**
+
+`webhooker start --config-file=/path/to/config.yml`
+
+**Stopping the webhooker server**
+
+`webhooker stop`
+
+### Configuration
+
+The configuration is written in YAML. To see an example have a look at `etc/example.yml`.
+
+**Global configuration**   
+This section holds some global parameters:
+
+```YAML
+global:
+  loglevel: 'debug'
+  logfile: 'app.log'
+  username: 'deployer'
+  password: 'Deploy1T'
+```
+
+* *loglevel*: One of: debug, info, warn, error, fatal
+* *logfile*: Path (including filename) to the application log
+* *username*: Username for the basic authentication to the application
+* *password*: Password for the basic authentication to the application
+
+**Payload type specific configuration**   
+Per payload type configuration. Available payload types: vcs. (More to come)
+
+**Payload type 'vcs'**   
+This is meant for payload types coming from a version control system like git.
+
+```YAML
+vcs:
+  myrepo:
+    _all:
+      command: 'echo _all with branch <%= branch_name %>'
+    production:
+      command: '/usr/local/bin/deploy-my-app'
+    otherbranch:
+      command: '/bin/true'
+  myotherrepo:
+    master:
+      command: 'cd /my/local/path; /usr/bin/git pull'
+  _all:
+    master:
+      command: 'echo applies to all master branches of not specifically configured repos'
+    _all:
+      command: 'echo will be applied to ALL repos and branches if not more specifically configured'
+```
+
+There should be an entry per repository. If needed there can be a catch-all name which applies
+to all repositories: `_all`. On the next level comes the name of the branch. Here could also be a
+catch-all name specified, also called `_all`.
+
+The `command` parameter can include the ERB snippet `<%= branch_name %>` which is replaced with
+the current branch name.
+
+### Testing
+
+There are some tests in place using `minitest`. Run `rake test` to run all available test.
+It should output a lot of log messages and at the end a summary of all test without any errors.
+For the testcases to succeed, the configuration file `etc/example.yml` is used.
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/webhooker/fork )
+1. Fork it ( https://github.com/tobru/webhooker/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+### Payload types
+
+Payload types are part of the business logic in `lib/webhooker/app.rb`.
+It is defined in the payload endpoint in `lib/webhooker/payloadtype/<payloadtype>.rb`.
+For an example have a look at `lib/webhooker/payloadtype/bitbucket.rb`.
+
+Adding a new type would involve the following steps:
+1. Write a payload parser in `lib/webhooker/payloadtype/`
+1. Add business logic for the payload type in `lib/webhooker/app.rb` under `case parsed_data[:type]`
+
+### Payload parser
+
+The payload parser parses the payload data received from the webhook sender into a standard hash
+which will be consumed by the business logic to take action.
+
+**vcs**
+
+The `vcs` payload type has the following hash signature:
+
+```ruby
+data[:type]
+data[:source]
+data[:repo_name]
+data[:branch_name]
+data[:author_name]
+```
+

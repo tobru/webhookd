@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version            = Webhooker::VERSION
   spec.authors            = ["Tobias Brunner"]
   spec.email              = ["tobias@tobru.ch"]
-  spec.summary            = %q{A configurable webhook receiver}
-  spec.description        = %q{Can receive webhooks from different sources and take actions}
+  spec.summary            = %q{Flexible, configurable universal webhook receiver}
+  spec.description        = %q{This app is a flexible, configurable universal webhook receiver, built with sinatra. It can receive a webhook, parse its payload and take action according to the configuration.}
   spec.homepage           = "https://tobrunet.ch"
   spec.license            = "MIT"
 

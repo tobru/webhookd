@@ -18,6 +18,9 @@ Just install the GEM:
 
     $ gem install webhooker
 
+The GEM has some dependencies which maybe need to build native extensions. Therefore on Ubuntu
+and Debian the packages `ruby-dev` and `build-essential` are needed.
+
 ## Usage
 
 ### Starting and stopping

@@ -31,6 +31,7 @@ module Logging
 
     def configure_logger_for(classname)
       logfile = File.open(Configuration.settings[:global][:logfile], 'a')
+      logfile.sync = true
       logger = Logger.new MultiIO.new(STDOUT, logfile)
       case Configuration.settings[:global][:loglevel]
         when 'debug' then logger.level = Logger::DEBUG

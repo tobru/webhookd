@@ -53,7 +53,7 @@ case "$1" in
       sig 0 && echo >&2 "Running" && exit 0
       ;;
     stop)
-      sig QUIT && rm "$PID" && exit 0
+      sig QUIT && rm "$PID" && echo "Stopped" && exit 0
       echo >&2 "Not running"
       ;;
     restart)

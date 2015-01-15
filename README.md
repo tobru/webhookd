@@ -46,6 +46,17 @@ F.e. `webhooker start -d --config-file=/path/to/config.yml`
 
 `webhooker stop`
 
+### Init script
+
+There is an example init script which uses the Debian `/etc/default` mechanism to configured the
+daemon options. Just place the file `scripts/webhooker.init` to `/etc/init.d/webhooker`, the
+file `scripts/webhooker.default` to `/etc/default/webhooker` and update the parameters in the
+defaults file to match your system.
+
+It also has some configuration options to use SSL with the thin server. Set `SSL` to `yes` and update
+the parameters `SSK_KEY` and `SSL_CERT`. The daemon starts now with ssl enabled.
+On Debian and Ubuntu you maybe need to install `libssl-dev` and re-install the `eventmachine` gem.
+
 ### Configuration
 
 The configuration is written in YAML. To see an example have a look at `etc/example.yml`.

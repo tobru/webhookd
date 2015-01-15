@@ -11,6 +11,8 @@ vcs:
     production:
       command: 'echo this is production'
     nocommandbranch:
+      somethingunknown: 'whats that'
+    emptyconfigbranch:
   encdata:
     master:
       command: 'git pull'

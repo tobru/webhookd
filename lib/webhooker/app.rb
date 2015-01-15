@@ -70,59 +70,79 @@ module Webhooker
           when 'vcs'
             # reload configuration
             Configuration.load!(configuration_file)
+
+            branch_name = parsed_data[:branch_name]
+            repo_name = parsed_data[:repo_name]
+            repo_config = nil
+            branch_config = nil
             command = nil
-            # is the repo name configured?
-            if Configuration.settings[:vcs].has_key?(parsed_data[:repo_name].to_sym)
-              repo_config = Configuration.settings[:vcs][parsed_data[:repo_name].to_sym]
-              # is the branch configured?
-              if repo_config.has_key?(parsed_data[:branch_name].to_sym)
-                logger.debug "branch is explicitely configured"
-                branch_config = repo_config[parsed_data[:branch_name].to_sym]
-                begin
-                  command = branch_config[:command]
-                rescue
-                  logger.error "no command configured"
-                  halt 500, "no command configured\n"
-                end
-              # is there a catch all rule?
-              elsif repo_config.has_key?(:_all)
-                logger.debug "branch is not not explicitely configured, but there is a '_all' rule"
-                branch_config = repo_config[:_all]
-                command = branch_config[:command]
-              # don't know what to do
-              else
-                error_msg = "no configuration for branch '#{parsed_data[:branch_name]}' in repository '#{parsed_data[:repo_name]}' found"
-                logger.error error_msg
-                halt 500, "#{error_msg}\n"
-              end
-              if command
-                # vars for ERB binding
-                branch_name = parsed_data[:branch_name]
-                parsed_command = ERB.new(command).result(binding)
-                command_runner = Commandrunner.new(parsed_command)
-                command_runner.run
-              end
-            # is there a catch all rule?
+
+            # is the repository configured?
+            if Configuration.settings[:vcs].has_key?(repo_name.to_sym)
+              logger.debug "repository configuration found"
+              repo_config = Configuration.settings[:vcs][repo_name.to_sym]
             elsif Configuration.settings[:vcs].has_key?(:_all)
-              logger.info "repository not explicitely configured, but there is a '_all' rule"
+              logger.debug "repository configuration not found, but there is an '_all' rule"
+              repo_config = Configuration.settings[:vcs][:_all]
             else
-              error_msg = "the repository '#{parsed_data[:repo_name]}' is not configured"
-              logger.error error_msg
+              error_msg = "repository configuration not found: '#{repo_name}' is not configured\n"
+              logger.fatal error_msg
               halt 500, "#{error_msg}\n"
             end
+
+            # check if there is a repo_config available
+            if repo_config
+              # is the branch explicitely configured?
+              if repo_config.has_key?(branch_name.to_sym)
+                logger.debug "branch configuration found"
+                branch_config = repo_config[branch_name.to_sym]
+              elsif repo_config.has_key?(:_all)
+                logger.debug "branch configuration not found, but there is an '_all' rule"
+                branch_config = repo_config[:_all]
+              else
+                error_msg = "branch configuration not found: '#{branch_name}' in repo '#{repo_name}' is not configured\n"
+                logger.fatal error_msg
+                halt 500, "#{error_msg}\n"
+              end
+            end
+
+            # check if there is branch configuration data available
+            if branch_config
+              # is there a command configured?
+              if branch_config[:command]
+                command = branch_config[:command]
+              else
+                error_msg = "no command configuration found\n"
+                logger.fatal error_msg
+                halt 500, error_msg
+              end
+            else
+              error_msg = "branch configuration is empty\n"
+              logger.fatal error_msg
+              halt 500, error_msg
+            end
+
+            # check for a command to run and then run it
+            if command
+              parsed_command = ERB.new(command).result(binding)
+              command_runner = Commandrunner.new(parsed_command)
+              command_runner.run
+            end
+          # we don't know the type of this known payload
           else
             error_msg = "webhook payload type #{parsed_data[:type]} unknown"
             logger.fatal error_msg
             halt 500, "#{error_msg}\n"
         end
+      # this type of payload is not configured
       else
         error_msg = "webhook payload of type #{parsed_data[:type]} not configured"
         logger.info error_msg
         halt 500, "#{error_msg}\n"
       end
 
-      # output to the requester
       logger.debug "using configuration file #{configuration_file}"
+      # output to the requester
       "webhook received\n"
     end
   end

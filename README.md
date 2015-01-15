@@ -111,8 +111,21 @@ There should be an entry per repository. If needed there can be a catch-all name
 to all repositories: `_all`. On the next level comes the name of the branch. Here could also be a
 catch-all name specified, also called `_all`.
 
-The `command` parameter can include the ERB snippet `<%= branch_name %>` which is replaced with
-the current branch name.
+The `command` parameter is parsed with the ERB templating system. Available variables:
+* *branch_name*
+* *repo_name*
+
+**Examples:**
+
+```YAML
+vcs:
+  repo1:
+    _all:
+      command: 'echo this is the branch <%= branch_name %>'
+  _all:
+    master:
+      command: 'echo this is the repo <%= repo_name.upcase %>'
+```
 
 ### Testing
 

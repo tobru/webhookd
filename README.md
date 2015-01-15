@@ -139,3 +139,8 @@ data[:branch_name]
 data[:author_name]
 ```
 
+## TODO / Ideas
+
+* Create a debian package
+* Regex match for repository and branch names
+* Notification mechanism (jabber, irc)

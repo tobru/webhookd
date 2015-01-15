@@ -16,6 +16,7 @@ AS_USER=root
 AS_GROUP=root
 PORT=8088
 CONFIGFILE=/etc/webhooker.yaml
+SSL=no
 
 # You should only need to edit the default/webhooker file and not
 #   this init script directly
@@ -23,9 +24,14 @@ if [ -r "/etc/default/webhooker" ] ; then
   . /etc/default/webhooker
 fi
 
+SSL_PARAMS=""
+if [ "${SSL}" == "yes" ] ; then
+  SSL_PARAMS="--ssl --ssl-key-file ${SSK_KEY} --ssl-cert-file ${SSL_CERT}"
+fi
+
 TIMEOUT=${TIMEOUT-60}
 PID=/run/webhooker.${PORT}.pid
-CMD="webhooker start -s1 -d -p ${PORT} -P /run/webhooker.pid --config-file=${CONFIGFILE} -d -u ${AS_USER} -g ${AS_GROUP} --tag webhooker"
+CMD="webhooker start -s1 -d -p ${PORT} -P /run/webhooker.pid --config-file=${CONFIGFILE} -d -u ${AS_USER} -g ${AS_GROUP} --tag webhooker ${SSL_PARAMS}"
 
 set -u
 

@@ -42,6 +42,8 @@ F.e. `webhooker start -d --config-file=/path/to/config.yml`
 
 `webhooker start --config-file=/path/to/config.yml`
 
+Test it with `curl -XGET http://username:password@localhost:8088`
+
 **Stopping the webhooker server**
 
 `webhooker stop`
@@ -56,6 +58,9 @@ defaults file to match your system.
 It also has some configuration options to use SSL with the thin server. Set `SSL` to `yes` and update
 the parameters `SSK_KEY` and `SSL_CERT`. The daemon starts now with ssl enabled.
 On Debian and Ubuntu you maybe need to install `libssl-dev` and re-install the `eventmachine` gem.
+
+You can test the SSL connection with `curl -XGET https://username:password@localhost:8088 -k` or
+`openssl s_client -showcerts -connect localhost:8088`
 
 ### Configuration
 

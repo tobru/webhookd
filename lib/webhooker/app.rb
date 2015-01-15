@@ -91,7 +91,7 @@ module Webhooker
                 command = branch_config[:command]
               # don't know what to do
               else
-                error_msg = "no configuration for branch '#{parsed_data[:branch_name]}' found"
+                error_msg = "no configuration for branch '#{parsed_data[:branch_name]}' in repository '#{parsed_data[:repo_name]}' found"
                 logger.error error_msg
                 halt 500, "#{error_msg}\n"
               end

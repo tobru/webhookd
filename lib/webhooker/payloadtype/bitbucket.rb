@@ -14,6 +14,7 @@ module Webhooker
 
       prepared = URI.unescape(@payload.gsub("payload=","").gsub("+"," "))
       json_parsed = JSON.parse(URI.unescape(prepared))
+      logger.debug "raw received data: #{json_parsed}"
 
       data = Hash.new
       data[:type] = 'vcs'

@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email              = ["tobias@tobru.ch"]
   spec.summary            = %q{Flexible, configurable universal webhook receiver}
   spec.description        = %q{This app is a flexible, configurable universal webhook receiver, built with sinatra. It can receive a webhook, parse its payload and take action according to the configuration.}
-  spec.homepage           = "https://tobrunet.ch"
+  spec.homepage           = "https://github.com/tobru/webhooker"
   spec.license            = "MIT"
 
   spec.files              = `git ls-files -z`.split("\x0")

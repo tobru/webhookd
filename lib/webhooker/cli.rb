@@ -37,7 +37,11 @@ module Webhooker
         spec = Gem::Specification.find_by_name('webhooker')
         "#{spec.gem_dir}/config.ru"
       rescue Gem::LoadError
-        "./config.ru"
+        if File.exist?('/etc/webhooker/config.ru')
+          '/etc/webhooker/config.ru'
+        else
+          './config.ru'
+        end
       end
     end
 

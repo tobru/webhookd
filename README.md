@@ -21,6 +21,8 @@ Just install the GEM:
 The GEM has some dependencies which maybe need to build native extensions. Therefore on Ubuntu
 and Debian the packages `ruby-dev` and `build-essential` are needed.
 
+Some very basic Debian packaging effort can be found under [tobru/webhooker-debian-packaging](https://github.com/tobru/webhooker-debian-packaging).
+
 ## Usage
 
 ### Starting and stopping
@@ -170,6 +172,5 @@ data[:author_name]
 
 ## TODO / Ideas
 
-* Create a debian package
 * Regex match for repository and branch names
 * Notification mechanism (jabber, irc)

@@ -1,12 +1,12 @@
 require 'sinatra/base'
 require 'erb'
 require 'thin'
-require 'webhooker/version'
-require 'webhooker/command_runner'
-require 'webhooker/logging'
-require 'webhooker/configuration'
+require 'webhookd/version'
+require 'webhookd/command_runner'
+require 'webhookd/logging'
+require 'webhookd/configuration'
 
-module Webhooker
+module Webhookd
   class App < Sinatra::Base
     configuration_file = ENV["CONFIG_FILE"] || 'etc/example.yml'
     Configuration.load!(configuration_file)
@@ -20,7 +20,7 @@ module Webhooker
     helpers do
       def protected!
         return if authorized?
-        headers['WWW-Authenticate'] = 'Basic realm="Webhooker authentication"'
+        headers['WWW-Authenticate'] = 'Basic realm="Webhookd authentication"'
         halt 401, "Not authorized\n"
       end
 
@@ -54,10 +54,10 @@ module Webhooker
       logger.info "incoming request from #{request.ip} for payload type #{params[:payloadtype]}"
 
       begin
-        logger.debug "try to load webhooker/payloadtype/#{params[:payloadtype]}.rb"
-        load "webhooker/payloadtype/#{params[:payloadtype]}.rb"
+        logger.debug "try to load webhookd/payloadtype/#{params[:payloadtype]}.rb"
+        load "webhookd/payloadtype/#{params[:payloadtype]}.rb"
       rescue LoadError
-        logger.error "file not found: webhooker/payloadtype/#{params[:payloadtype]}.rb"
+        logger.error "file not found: webhookd/payloadtype/#{params[:payloadtype]}.rb"
         halt 400, "Payload type unknown\n"
       end
 

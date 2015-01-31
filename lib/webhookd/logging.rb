@@ -1,5 +1,5 @@
 require 'logger'
-require 'webhooker/configuration'
+require 'webhookd/configuration'
 
 module Logging
   class MultiIO

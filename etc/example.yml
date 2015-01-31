@@ -1,7 +1,7 @@
 ---
 global:
   loglevel: 'debug'
-  logfile: '/tmp/webhooker_dev.log'
+  logfile: '/tmp/webhookd_dev.log'
   username: 'deployer'
   password: 'Deploy1T'
 vcs:

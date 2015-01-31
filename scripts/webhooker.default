@@ -1,9 +1,0 @@
-# /etc/default/webhooker
-# Configuration for Webhooker daemon init script
-AS_USER=root
-AS_GROUP=root
-CONFIGFILE=/etc/webhooker/webhooker.yaml
-PORT=8088
-SSL=no
-SSK_KEY=/etc/ssl/private/mykey.pem
-SSL_CERT=/etc/ssl/certs/mycert.pem

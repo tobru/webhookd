@@ -1,7 +1,7 @@
 ---
 global:
   loglevel: 'debug'
-  logfile: '/var/log/webhooker.log'
+  logfile: '/var/log/webhookd.log'
   username: 'myuser'
   password: 'CHANGEME'
 vcs:

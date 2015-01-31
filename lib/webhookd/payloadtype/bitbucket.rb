@@ -1,5 +1,5 @@
-require 'webhooker/logging'
-module Webhooker
+require 'webhookd/logging'
+module Webhookd
   class ParsePayload
 
     include Logging

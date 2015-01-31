@@ -1,12 +1,12 @@
 require 'thor'
 
-module Webhooker
+module Webhookd
   class CLI < Thor
     include Thor::Actions
 
     attr_reader :name
 
-    desc "start", "Starts the webhooker server"
+    desc "start", "Starts the webhookd server"
     method_option :config_file, :desc => "Path to the configuration file"
     def start(*args)
       port_option = args.include?('-p') ? '' : ' -p 8088'
@@ -34,11 +34,11 @@ module Webhooker
 
     def get_rackup_config
       begin
-        spec = Gem::Specification.find_by_name('webhooker')
+        spec = Gem::Specification.find_by_name('webhookd')
         "#{spec.gem_dir}/config.ru"
       rescue Gem::LoadError
-        if File.exist?('/etc/webhooker/config.ru')
-          '/etc/webhooker/config.ru'
+        if File.exist?('/etc/webhookd/config.ru')
+          '/etc/webhookd/config.ru'
         else
           './config.ru'
         end

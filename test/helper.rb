@@ -5,10 +5,10 @@ Bundler.require :default, :test
 
 require 'minitest/autorun'
 require 'rack/test'
-require_relative '../lib/webhooker/app.rb'
+require_relative '../lib/webhookd/app.rb'
 
 include Rack::Test::Methods
 
 def app
-  Webhooker::App
+  Webhookd::App
 end

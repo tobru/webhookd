@@ -1,7 +1,7 @@
 require 'open3'
-require 'webhooker/logging'
+require 'webhookd/logging'
 
-module Webhooker
+module Webhookd
   class Commandrunner
 
     include Logging

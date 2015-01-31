@@ -4,5 +4,5 @@ require 'pathname'
 bin_file = Pathname.new(__FILE__).realpath
 $:.unshift File.expand_path("../../lib", bin_file)
 
-require 'webhooker/cli'
-Webhooker::CLI.start(ARGV)
+require 'webhookd/cli'
+Webhookd::CLI.start(ARGV)

@@ -1,12 +1,12 @@
 #!/bin/bash
 
 ### BEGIN INIT INFO
-# Provides:        webhooker_start
+# Provides:        webhookd_start
 # Required-Start:  $network $syslog
 # Required-Stop:
 # Default-Start:   2 3 4 5
 # Default-Stop:
-# Short-Description: Starts up the webhooker server
+# Short-Description: Starts up the webhookd server
 ### END INIT INFO
 
 set -e
@@ -15,13 +15,13 @@ set -e
 AS_USER=root
 AS_GROUP=root
 PORT=8088
-CONFIGFILE=/etc/webhooker.yaml
+CONFIGFILE=/etc/webhookd.yaml
 SSL=no
 
-# You should only need to edit the default/webhooker file and not
+# You should only need to edit the default/webhookd file and not
 #   this init script directly
-if [ -r "/etc/default/webhooker" ] ; then
-  . /etc/default/webhooker
+if [ -r "/etc/default/webhookd" ] ; then
+  . /etc/default/webhookd
 fi
 
 SSL_PARAMS=""
@@ -30,8 +30,8 @@ if [ "${SSL}" == "yes" ] ; then
 fi
 
 TIMEOUT=${TIMEOUT-60}
-PID=/run/webhooker.${PORT}.pid
-CMD="webhooker start -s1 -d -p ${PORT} -P /run/webhooker.pid --config-file=${CONFIGFILE} -d -u ${AS_USER} -g ${AS_GROUP} --tag webhooker ${SSL_PARAMS}"
+PID=/run/webhookd.${PORT}.pid
+CMD="webhookd start -s1 -d -p ${PORT} -P /run/webhookd.pid --config-file=${CONFIGFILE} -d -u ${AS_USER} -g ${AS_GROUP} --tag webhookd ${SSL_PARAMS}"
 
 set -u
 

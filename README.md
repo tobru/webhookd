@@ -1,4 +1,4 @@
-# Webhooker
+# Webhookd
 
 **Flexible, configurable universal webhook receiver**
 
@@ -7,7 +7,7 @@ sinatra.
 It can receive a webhook, parse its payload and take action according to the
 configuration.
 
-Example: A git push to Gitlab sends a webhook to the webhooker. The webhooker then
+Example: A git push to Gitlab sends a webhook to the webhookd. The webhookd then
 parses the payload which contains the name and the branch of the pushed commit.
 After that it looks up in the configuration what to do: run a different script per
 repo or even per branch.
@@ -16,45 +16,45 @@ repo or even per branch.
 
 Just install the GEM:
 
-    $ gem install webhooker
+    $ gem install webhookd
 
 The GEM has some dependencies which maybe need to build native extensions. Therefore on Ubuntu
 and Debian the packages `ruby-dev` and `build-essential` are needed.
 
-Some very basic Debian packaging effort can be found under [tobru/webhooker-debian-packaging](https://github.com/tobru/webhooker-debian-packaging).
+Some very basic Debian packaging effort can be found under [tobru/webhookd-debian-packaging](https://github.com/tobru/webhookd-debian-packaging).
 
 ## Usage
 
 ### Starting and stopping
 
-The webhooker uses thin as rack server by default. It has a small CLI utility
-to start and stop the service, called `webhooker`:
+The webhookd uses thin as rack server by default. It has a small CLI utility
+to start and stop the service, called `webhookd`:
 
 ```
 Commands:
-  webhooker help [COMMAND]  # Describe available commands or one specific command
-  webhooker start           # Starts the webhooker server
-  webhooker stop            # Stops the thin server
+  webhookd help [COMMAND]  # Describe available commands or one specific command
+  webhookd start           # Starts the webhookd server
+  webhookd stop            # Stops the thin server
 ```
 
-To see the options for `thin`, run `webhooker start -h`. They can simply be added to the `start` command.
-F.e. `webhooker start -d --config-file=/path/to/config.yml`
+To see the options for `thin`, run `webhookd start -h`. They can simply be added to the `start` command.
+F.e. `webhookd start -d --config-file=/path/to/config.yml`
 
-**Starting the webhooker server**
+**Starting the webhookd server**
 
-`webhooker start --config-file=/path/to/config.yml`
+`webhookd start --config-file=/path/to/config.yml`
 
 Test it with `curl -XGET http://username:password@localhost:8088`
 
-**Stopping the webhooker server**
+**Stopping the webhookd server**
 
-`webhooker stop`
+`webhookd stop`
 
 ### Init script
 
 There is an example init script which uses the Debian `/etc/default` mechanism to configured the
-daemon options. Just place the file `scripts/webhooker.init` to `/etc/init.d/webhooker`, the
-file `scripts/webhooker.default` to `/etc/default/webhooker` and update the parameters in the
+daemon options. Just place the file `scripts/webhookd.init` to `/etc/init.d/webhookd`, the
+file `scripts/webhookd.default` to `/etc/default/webhookd` and update the parameters in the
 defaults file to match your system.
 
 It also has some configuration options to use SSL with the thin server. Set `SSL` to `yes` and update
@@ -137,7 +137,7 @@ For the testcases to succeed, the configuration file `etc/example.yml` is used.
 
 ## Contributing
 
-1. Fork it ( https://github.com/tobru/webhooker/fork )
+1. Fork it ( https://github.com/tobru/webhookd/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -145,13 +145,13 @@ For the testcases to succeed, the configuration file `etc/example.yml` is used.
 
 ### Payload types
 
-Payload types are part of the business logic in `lib/webhooker/app.rb`.
-It is defined in the payload endpoint in `lib/webhooker/payloadtype/<payloadtype>.rb`.
-For an example have a look at `lib/webhooker/payloadtype/bitbucket.rb`.
+Payload types are part of the business logic in `lib/webhookd/app.rb`.
+It is defined in the payload endpoint in `lib/webhookd/payloadtype/<payloadtype>.rb`.
+For an example have a look at `lib/webhookd/payloadtype/bitbucket.rb`.
 
 Adding a new type would involve the following steps:
-1. Write a payload parser in `lib/webhooker/payloadtype/`
-1. Add business logic for the payload type in `lib/webhooker/app.rb` under `case parsed_data[:type]`
+1. Write a payload parser in `lib/webhookd/payloadtype/`
+1. Add business logic for the payload type in `lib/webhookd/app.rb` under `case parsed_data[:type]`
 
 ### Payload parser
 

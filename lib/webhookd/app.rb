@@ -129,6 +129,8 @@ module Webhookd
               command_runner.run
             end
           # we don't know the type of this known payload
+          when 'debug'
+            logger.info "payload type was debug, see debug loglevel"
           else
             error_msg = "webhook payload type #{parsed_data[:type]} unknown"
             logger.fatal error_msg

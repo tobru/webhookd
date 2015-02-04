@@ -139,7 +139,7 @@ module Webhookd
       # this type of payload is not configured
       else
         error_msg = "webhook payload of type #{parsed_data[:type]} not configured"
-        logger.info error_msg
+        logger.error error_msg
         halt 500, "#{error_msg}\n"
       end
 

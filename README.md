@@ -243,7 +243,12 @@ git-buildpackage -us -uc
 
 If there is a new upstream version:
 ```
-gem fetch webhookd && gem2deb webhookd*.gem ; git-import-orig
+gem fetch webhookd && gem2deb webhookd*.gem
+cd webhookd
+git-import-orig ../webhookd-<VER>.tar.gz
 dch -v <upstreamver>-<incrementpkgrel>
+git commit -a
+rm Gemfile.lock
+git-buildpackage -us -uc
 ```
 

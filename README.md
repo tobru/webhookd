@@ -170,7 +170,57 @@ data[:branch_name]
 data[:author_name]
 ```
 
-## TODO / Ideas
+## Packaging
 
-* Regex match for repository and branch names
-* Notification mechanism (jabber, irc)
+### Debian
+
+Some very basic Debian packaging effort can be found under [tobru/webhookd-debian-packaging](https://github.com/tobru/webhookd-debian-packaging).
+This is how the initial package creation was done:
+
+```
+export DEBFULLNAME="My Name"
+export DEBEMAIL="email@address.com"
+gem fetch webhookd
+gem2deb -p webhookd webhookd*.gem
+cd webhookd-<VERSION>
+git init
+git-import-orig ../webhookd_*.orig.tar.gz --pristine-tar
+cd ..
+mv webhookd-<VERSION> webhookd
+cd webhookd
+
+# EDIT .gitignore
+vi .gitignore
+
+# add following lines
+/debian/webhookd.postinst.debhelper
+/debian/webhookd.postrm.debhelper
+/debian/webhookd.prerm.debhelper
+/debian/webhookd.substvars
+/debian/webhookd
+/debian/files
+/.pc
+Gemfile.lock
+
+:wq
+# END EDIT
+
+git add .
+git commit -a
+git-buildpackage -us -uc
+```
+
+After changes to the packaging process (`/debian` folder):
+```
+dch -v <upstreamver>-<incrementpkgrel>
+git commit -a
+rm Gemfile.lock
+git-buildpackage -us -uc
+```
+
+If there is a new upstream version:
+```
+gem fetch webhookd && gem2deb webhookd*.gem ; git-import-orig
+dch -v <upstreamver>-<incrementpkgrel>
+```
+

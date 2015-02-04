@@ -1,4 +1,4 @@
-# Webhookd
+# WebhookD
 
 **Flexible, configurable universal webhook receiver**
 
@@ -129,6 +129,16 @@ vcs:
       command: 'echo this is the repo <%= repo_name.upcase %>'
 ```
 
+### Webhook usage
+
+The use a webhook, add the URL to your project.
+
+**Available webhook payload types**
+
+* *Bitbucket*: http(s)://USERNAME:PASSWORD@YOURIP:YOURPORT/payload/bitbucket
+* *Gitlab*: http(s)://USERNAME:PASSWORD@YOURIP:YOURPORT/payload/gitlab
+* *Debug*: http(s)://USERNAME:PASSWORD@YOURIP:YOURPORT/payload/debug
+
 ### Testing
 
 There are some tests in place using `minitest`. Run `rake test` to run all available test.
@@ -152,6 +162,7 @@ For an example have a look at `lib/webhookd/payloadtype/bitbucket.rb`.
 Adding a new type would involve the following steps:
 1. Write a payload parser in `lib/webhookd/payloadtype/`
 1. Add business logic for the payload type in `lib/webhookd/app.rb` under `case parsed_data[:type]`
+1. Update README.md
 
 ### Payload parser
 
@@ -169,6 +180,18 @@ data[:repo_name]
 data[:branch_name]
 data[:author_name]
 ```
+
+**debug**
+
+The `debug` payload type has the following hash signature:
+
+```ruby
+data[:type]
+```
+
+It can be used to develop a new payload type or payload parser.
+When using this payload type, it just outputs the request body
+in the logfile under the loglevel `debug`.
 
 ## Packaging
 

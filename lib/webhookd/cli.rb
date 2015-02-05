@@ -35,7 +35,12 @@ module Webhookd
     def get_rackup_config
       begin
         spec = Gem::Specification.find_by_name('webhookd')
-        "#{spec.gem_dir}/config.ru"
+        fullpath = "#{spec.gem_dir}/config.ru"
+        if File.exist?(fullpath)
+          fullpath
+        else
+          raise Gem::LoadError
+        end
       rescue Gem::LoadError
         if File.exist?('/etc/webhookd/config.ru')
           '/etc/webhookd/config.ru'

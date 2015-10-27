@@ -26,7 +26,7 @@ fi
 
 SSL_PARAMS=""
 if [ "${SSL}" == "yes" ] ; then
-  SSL_PARAMS="--ssl --ssl-key-file ${SSK_KEY} --ssl-cert-file ${SSL_CERT}"
+  SSL_PARAMS="--ssl --ssl-key-file ${SSL_KEY} --ssl-cert-file ${SSL_CERT}"
 fi
 
 TIMEOUT=${TIMEOUT-60}

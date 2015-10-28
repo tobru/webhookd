@@ -5,5 +5,5 @@ AS_GROUP=root
 CONFIGFILE=/etc/webhookd/webhookd.yaml
 PORT=8088
 SSL=no
-SSK_KEY=/etc/ssl/private/mykey.pem
+SSL_KEY=/etc/ssl/private/mykey.pem
 SSL_CERT=/etc/ssl/certs/mycert.pem
